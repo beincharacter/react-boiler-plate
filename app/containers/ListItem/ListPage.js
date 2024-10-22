@@ -2,24 +2,31 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
-import { loadListItems } from './actions';
-import { makeSelectListItems, makeSelectLoading, makeSelectError } from './selectors';
+import { loadListItems, setPage } from './actions';
+import { makeSelectListItems, makeSelectLoading, makeSelectError, makeSelectPage } from './selectors';
 
-function ListPage({ items, loading, error, onLoadListItems }) {
+function ListPage({ items, loading, error, page, onLoadListItems, onSetPage }) {
   useEffect(() => {
-    onLoadListItems();
-  }, []);
+    onLoadListItems(page);
+  }, [page]);
+
+  const loadMore = () => {
+    onSetPage(page + 1); 
+  };
 
   return (
     <div>
       <h1>List of Items</h1>
-      {loading && <p>Loading...</p>}
-      {error && <p>Error loading items</p>}
       <ul>
         {items && items.map(item => (
           <li key={item.id}>{item.title}</li>
         ))}
       </ul>
+      {loading && <p>Loading...</p>}
+      {error && <p>Error loading items</p>}
+      {!loading && !error && (
+        <button onClick={loadMore}>Load More</button>  
+      )}
     </div>
   );
 }
@@ -28,10 +35,12 @@ const mapStateToProps = createStructuredSelector({
   items: makeSelectListItems(),
   loading: makeSelectLoading(),
   error: makeSelectError(),
+  page: makeSelectPage(),
 });
 
 const mapDispatchToProps = dispatch => ({
-  onLoadListItems: () => dispatch(loadListItems()),
+  onLoadListItems: (page) => dispatch(loadListItems(page)),
+  onSetPage: (page) => dispatch(setPage(page)),
 });
 
 const withConnect = connect(mapStateToProps, mapDispatchToProps);

@@ -37,8 +37,18 @@ function checkStatus(response) {
  *
  * @return {object}           The response data
  */
-export default function request(url, options) {
-  return fetch(url, options)
+export default async function request(url, options) {
+  const response = await fetch(url, options);
+  if (response.status >= 200 && response.status < 300) {
+    return await response.json();
+  }
+  throw new Error(response.statusText);
+}
+
+
+export async function requestThunk(url, options = {}) {
+  const response = await fetch(url, options)
     .then(checkStatus)
     .then(parseJSON);
+  return response;
 }

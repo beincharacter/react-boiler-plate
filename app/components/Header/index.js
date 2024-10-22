@@ -21,6 +21,9 @@ function Header() {
         <HeaderLink to="/features">
           <FormattedMessage {...messages.features} />
         </HeaderLink>
+        <HeaderLink to="/list">
+          <FormattedMessage {...messages.list} />
+        </HeaderLink>
       </NavBar>
     </div>
   );
